@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from qe.drivers import *
 from qe.io import *
+from qe.no import *
 import sys
 
 if __name__ == "__main__":
@@ -12,9 +13,13 @@ if __name__ == "__main__":
         driven_by = sys.argv[4]
     except IndexError:
         driven_by = "integral"
+    try:
+        do_NOs = sys.argv[5]
+    except IndexError:
+        do_NOs = True
 
     # Load integrals
-    n_ord, E0, d_one_e_integral, d_two_e_integral = load_integrals(fcidump_path)
+    n_orb, E0, d_one_e_integral, d_two_e_integral = load_integrals(fcidump_path)
     # Load wave function
     psi_coef, psi_det = load_wf(wf_path)
     # Hamiltonian engine
@@ -30,3 +35,6 @@ if __name__ == "__main__":
             comm, E0, d_one_e_integral, d_two_e_integral, psi_det, driven_by=driven_by
         )
         print(f"N_det: {len(psi_det)}, E {E}")
+
+    if do_NOs:
+        no_occ, no_coeff = natural_orbitals(comm, lewis, n_orb, psi_coef, psi_det, n)
